@@ -34,6 +34,7 @@ dependencies = [
 [project.scripts]
 chad = "chad.main:main"
 chad-extractor = "chad_extractor.main:main"
+chad-hunt = "chad.utils.hunt:main"
 
 [tool.setuptools]
 license-files = []

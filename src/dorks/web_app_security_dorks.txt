@@ -1,0 +1,199 @@
+# Web Application Security Testing Dorks
+# For finding vulnerable web applications and misconfigurations
+
+# =================================
+# AUTHENTICATION BYPASS
+# =================================
+intext:"Warning: mysql_connect(): Access denied for user: '*@*" "on line"
+intext:"supplied argument is not a valid mysql result resource"
+intext:"Warning: mysql_query()" "invalid query"
+intext:"mysql_fetch_array(): supplied argument is not a valid"
+intext:"Warning: Cannot modify header information - headers already sent"
+intext:"Warning: Failed opening" "on line" "include_path"
+
+# =================================
+# PHP INFO & DEBUG PAGES
+# =================================
+intitle:"phpinfo()" "PHP Version"
+inurl:phpinfo.php
+inurl:info.php
+inurl:test.php
+inurl:debug.php
+ext:php inurl:phpinfo.php
+filetype:php inurl:install
+filetype:php inurl:setup
+
+# =================================
+# SQL INJECTION OPPORTUNITIES
+# =================================
+inurl:index.php?id=
+inurl:category.php?id=
+inurl:product.php?id=
+inurl:news.php?id=
+inurl:article.php?id=
+inurl:show.php?id=
+inurl:page.php?id=
+inurl:file.php?id=
+inurl:gallery.php?id=
+inurl:story.php?id=
+
+# =================================
+# LOCAL FILE INCLUSION (LFI)
+# =================================
+inurl:index.php?page=
+inurl:main.php?page=
+inurl:home.php?page=
+inurl:view.php?page=
+inurl:content.php?page=
+inurl:admin.php?page=
+inurl:include.php?page=
+inurl:portal.php?page=
+
+# =================================
+# REMOTE FILE INCLUSION (RFI)
+# =================================
+inurl:index.php?include=
+inurl:index.php?path=
+inurl:index.php?module=
+inurl:index.php?content=
+inurl:index.php?doc=
+inurl:index.php?file=
+
+# =================================
+# DIRECTORY TRAVERSAL
+# =================================
+inurl:download.php?file=
+inurl:path.php?file=
+inurl:open.php?file=
+inurl:include.php?file=
+inurl:get.php?file=
+inurl:read.php?file=
+
+# =================================
+# UPLOAD VULNERABILITIES
+# =================================
+intitle:"Index of" upload
+inurl:upload.php
+inurl:upload.asp
+inurl:uploader.php
+inurl:file_upload.php
+intitle:"Uploader - Uploader v6"
+inurl:/upload/
+intext:"Upload" "Choose file"
+
+# =================================
+# ADMIN INTERFACES
+# =================================
+inurl:admin/
+inurl:administrator/
+inurl:admin.php
+inurl:admin.asp
+inurl:admin.cfm
+inurl:admin/index.php
+inurl:admin/login.php
+inurl:admin/admin.php
+inurl:admin/account.php
+inurl:admin/admin_login.php
+inurl:admin_area/admin.php
+inurl:admin_area/login.php
+inurl:siteadmin/login.php
+inurl:siteadmin/index.php
+inurl:moderator.php
+inurl:webadmin.php
+inurl:adminpanel.php
+inurl:controlpanel.php
+inurl:admin1.php
+inurl:admin2.php
+inurl:yonetici.php
+inurl:admincp/index.asp
+inurl:admincp/login.asp
+inurl:admincp/index.html
+inurl:admin/account.html
+inurl:adminpanel.html
+inurl:webadmin.html
+inurl:administration.html
+inurl:siteadmin/login.html
+inurl:siteadmin/index.html
+
+# =================================
+# CONFIGURATION FILES
+# =================================
+inurl:config.php
+inurl:configuration.php
+inurl:settings.php
+inurl:database.php
+inurl:db_config.php
+inurl:connect.php
+inurl:connection.php
+filetype:inc intext:mysql_connect
+filetype:inc mysql_connect OR mysql_pconnect
+filetype:inc dbconn
+
+# =================================
+# BACKUP & TEMPORARY FILES
+# =================================
+inurl:index.php.bak
+inurl:config.php.bak
+inurl:database.php.bak
+inurl:admin.php.bak
+inurl:login.php.bak
+inurl:.htaccess.bak
+inurl:web.config.bak
+inurl:index.html~
+inurl:index.php~
+inurl:config.inc~
+
+# =================================
+# CMS SPECIFIC
+# =================================
+# WordPress
+inurl:wp-admin/
+inurl:wp-login.php
+inurl:wp-config.php
+inurl:wp-content/uploads/
+site:*/wp-content/uploads/ filetype:sql
+
+# Joomla
+inurl:administrator/
+inurl:configuration.php-dist
+site:*/administrator/components/ filetype:php
+
+# Drupal
+inurl:admin/
+inurl:sites/default/files/
+inurl:user/login
+
+# =================================
+# E-commerce
+# =================================
+inurl:cart.php
+inurl:checkout.php
+inurl:order.php
+inurl:payment.php
+inurl:shop.php
+inurl:store.php
+inurl:basket.php
+
+# =================================
+# WEBMAIL
+# =================================
+inurl:webmail/
+inurl:mail/
+inurl:email/
+inurl:roundcube/
+inurl:squirrelmail/
+inurl:horde/
+intitle:"SquirrelMail version"
+intitle:"Roundcube Webmail"
+
+# =================================
+# API ENDPOINTS
+# =================================
+inurl:api/
+inurl:rest/
+inurl:json/
+inurl:ajax/
+inurl:service/
+inurl:services/
+filetype:json api_key
+filetype:xml api_key

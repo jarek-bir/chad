@@ -1,0 +1,62 @@
+# Infrastructure & Network Security Dorks
+
+# Network Devices & Routers
+intitle:"Router" intext:"admin" OR intext:"password"
+intext:"cisco" intext:"enable secret" OR intext:"enable password"
+intext:"mikrotik" OR intext:"RouterOS"
+inurl:"/cgi-bin/" intext:"admin"
+intext:"DD-WRT" OR intext:"OpenWrt"
+intext:"pfSense" OR intext:"OPNsense"
+intitle:"ASUS" intext:"router"
+intitle:"TP-Link" OR intitle:"D-Link" OR intitle:"Netgear"
+
+# IoT & Smart Devices
+intext:"IP Camera" OR intext:"Network Camera"
+intext:"DVR" intext:"login" OR intext:"admin"
+intitle:"Webcam" OR intitle:"IP Cam"
+intext:"smart home" OR intext:"IoT"
+intext:"Raspberry Pi" intext:"admin"
+intext:"Arduino" OR intext:"ESP32"
+
+# Network Services
+intext:"SSH" intext:"password" filetype:txt
+intext:"FTP" intext:"login" OR intext:"anonymous"
+intext:"Telnet" intext:"admin" OR intext:"root"
+intext:"SNMP" intext:"community" OR intext:"public"
+intext:"VNC" intext:"password" OR intext:"connect"
+intext:"RDP" intext:"administrator"
+
+# Cloud Infrastructure
+intext:"AWS" intext:"access key" OR intext:"secret key"
+intext:"Azure" intext:"storage account" OR intext:"connection string"
+intext:"GCP" OR intext:"Google Cloud" intext:"service account"
+intext:"Kubernetes" intext:"config" OR intext:"secret"
+intext:"Docker" intext:"registry" OR intext:"hub"
+
+# Monitoring & Management
+intitle:"Nagios" OR intitle:"Zabbix" OR intitle:"PRTG"
+intext:"Grafana" intext:"admin" OR intext:"login"
+intext:"Kibana" OR intext:"Elasticsearch"
+intext:"Splunk" intext:"admin" OR intext:"login"
+intitle:"VMware" intext:"vCenter" OR intext:"ESXi"
+
+# VPN & Remote Access
+intext:"OpenVPN" intext:"config" OR intext:"client"
+intext:"IPSec" OR intext:"L2TP" intext:"password"
+intext:"WireGuard" intext:"config"
+intext:"TeamViewer" OR intext:"AnyDesk"
+intext:"RDP" intext:"Remote Desktop"
+
+# Network Discovery
+intext:"nmap" filetype:xml OR filetype:txt
+intext:"netstat" OR intext:"ss -" filetype:txt
+intext:"ifconfig" OR intext:"ip addr" filetype:txt
+intext:"route" OR intext:"routing table"
+intext:"arp" intext:"table" filetype:txt
+
+# Firewall & Security
+intext:"iptables" filetype:conf OR filetype:txt
+intext:"pf.conf" OR intext:"ipfw"
+intext:"firewall" intext:"rules" filetype:conf
+intext:"fail2ban" OR intext:"denyhosts"
+intext:"IDS" OR intext:"IPS" intext:"alert"

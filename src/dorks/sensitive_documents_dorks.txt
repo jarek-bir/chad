@@ -1,0 +1,83 @@
+# Sensitive Document Discovery Dorks
+# For finding confidential documents and data leaks
+
+# =================================
+# CONFIDENTIAL DOCUMENTS
+# =================================
+intext:"confidential" filetype:pdf
+intext:"not for distribution" confidential
+intext:"not for public release" -site:edu -site:gov -site:mil
+ext:(doc | pdf | xls | txt | ps | rtf | odt | sxw | psw | ppt | pps | xml) (intext:confidential salary | intext:"budget approved") inurl:confidential
+intext:"Certificate Practice Statement" filetype:PDF | DOC
+intext:"Network Vulnerability Assessment Report"
+intext:"Host Vulnerability Summary Report"
+filetype:pdf "Assessment Report" nessus
+intext:"This report lists" "identified by Internet Scanner"
+intext:"Shadow Security Scanner performed a vulnerability assessment"
+intext:"The following report contains confidential information" vulnerability -search
+
+# =================================
+# RESUMES & PERSONAL DATA
+# =================================
+intext:"phone * * *" "address *" "e-mail" intitle:"curriculum vitae"
+intitle:"curriculum vitae" filetype:doc
+filetype:doc resume "phone number" salary
+filetype:pdf "curriculum vitae" phone email
+
+# =================================
+# FINANCIAL DOCUMENTS
+# =================================
+intext:"Thank you for your order" +receipt
+Financial spreadsheets: finance.xls
+Financial spreadsheets: finances.xls
+filetype:xls "budget" "financial"
+filetype:xlsx "salary" "compensation"
+filetype:pdf "invoice" "payment"
+
+# =================================
+# INTELLECTUAL PROPERTY
+# =================================
+filetype:doc "confidential" "proprietary"
+filetype:pdf "trade secret" "proprietary"
+filetype:ppt "confidential" "internal use only"
+intext:"94FBR" "ADOBE PHOTOSHOP"
+ext:txt "license key" OR "serial number"
+
+# =================================
+# CUSTOMER DATA
+# =================================
+filetype:xls "customer" "phone" "email"
+filetype:csv "username" "password" "email"
+intext:(password | passcode) intext:(username | userid | user) filetype:csv
+filetype:mdb "customer" "address" "phone"
+
+# =================================
+# INTERNAL COMMUNICATIONS
+# =================================
+filetype:eml "confidential" "internal"
+filetype:msg "sensitive" "confidential"
+filetype:pst "internal" "confidential"
+( filetype:mail | filetype:eml | filetype:mbox | filetype:mbx ) intext:password|subject
+
+# =================================
+# GOVERNMENT & MILITARY
+# =================================
+site:mil "confidential"
+site:gov "classified"
+top secret site:mil
+confidential site:mil
+
+# =================================
+# HEALTHCARE DATA
+# =================================
+filetype:xls "patient" "medical"
+filetype:pdf "patient" "medical record"
+intext:"medical record" filetype:pdf
+intext:"patient information" filetype:doc
+
+# =================================
+# LEGAL DOCUMENTS
+# =================================
+filetype:pdf "attorney-client privilege"
+filetype:doc "legal" "confidential"
+intext:"attorney work product" filetype:pdf

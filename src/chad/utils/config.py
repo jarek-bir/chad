@@ -13,4 +13,6 @@ def banner():
 	print("# Search Google Dorks like Chad.                                        #")
 	print("# GitHub repository at github.com/ivan-sincek/chad.                     #")
 	print("#                                                                       #")
+	print("# Enhanced with advanced bug hunting capabilities                       #")
+	print("#                                                                       #")
 	print("#########################################################################")

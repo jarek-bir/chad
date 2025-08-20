@@ -1,0 +1,69 @@
+chad --help                                           
+Chad v7.1 ( github.com/ivan-sincek/chad )
+
+Usage:   chad -q queries     [-s site         ] [-x proxies    ] [-o out         ]
+Example: chad -q queries.txt [-s *.example.com] [-x proxies.txt] [-o results.json]
+
+DESCRIPTION
+    Search Google Dorks like Chad
+QUERIES
+    File containing Google Dorks or a single query to use
+    -q, --queries = queries.txt | intext:password | "ext:tar OR ext:zip" | etc.
+SITE
+    Domain[s] to search
+    -s, --site = example.com | sub.example.com | *.example.com | "*.example.com -www" | etc.
+TIME
+    Get results not older than the specified time in months
+    -t, --time =  6 | 12 | 24 | etc.
+TOTAL RESULTS
+    Total number of unique results
+    Default: 100
+    -tr, --total-results = 200 | etc.
+PAGE RESULTS
+    Number of results per page - capped at 100 by Google
+    Default: randint(70, 100)
+    -pr, --page-results = 50 | etc.
+MINIMUM QUERIES
+    Minimum sleep time in seconds between Google queries
+    Default: 75
+    -min-q, --minimum-queries = 120 | etc.
+MAXIMUM QUERIES
+    Maximum sleep time between Google queries
+    Default: minimum + 50
+    -max-q, --maximum-queries = 180 | etc.
+MINIMUM PAGES
+    Minimum sleep time between Google pages
+    Default: 15
+    -min-p, --minimum-pages = 30 | etc.
+MAXIMUM PAGES
+    Maximum sleep time between Google pages
+    Default: minimum + 10
+    -max-p, --maximum-pages = 60 | etc.
+USER AGENTS
+    User agents to use
+    Default: random-all
+    -a, --user-agents = user_agents.txt | random[-all] | curl/3.30.1 | etc.
+PROXIES
+    File containing web proxies or a single web proxy to use
+    -x, --proxies = proxies.txt | http://127.0.0.1:8080 | etc.
+DIRECTORY
+    Downloads directory
+    All downloaded files will be saved in this directory
+    -dir, --directory = downloads | etc.
+THREADS
+    Number of files to download in parallel
+    Default: 5
+    -th, --threads = 20 | etc.
+OUT
+    Output file
+    -o, --out = results.json | etc.
+NO SLEEP ON START
+    Disable the safety feature to prevent triggering rate limits by accident
+    -nsos, --no-sleep-on-start
+DEBUG
+    Enable debug output
+    -dbg, --debug
+
+
+i dodaje orginalny link 
+https://github.com/ivan-sincek/chad.git  Sprawdzdz mi dokladnie 

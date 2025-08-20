@@ -1,0 +1,50 @@
+# X.com (Twitter) Targeted Google Dorks - 3 Categories
+# Created for enhanced Chad Google Dorking
+
+# ================================================
+# CATEGORY 1: SOCIAL MEDIA & X.COM INTELLIGENCE
+# ================================================
+
+# X.com Profile Discovery
+site:x.com intext:"@" intext:"follower"
+site:x.com intext:"tweet" intext:"retweet"
+site:x.com inurl:/status/ intext:"twitter.com"
+site:x.com intext:"@twitter" OR intext:"@x"
+
+# Social Media Cross-References
+intext:"x.com/" intext:"profile" -site:x.com
+intext:"twitter.com/" intext:"follow" -site:twitter.com -site:x.com
+intext:"@" site:linkedin.com intext:"x.com"
+intext:"@" site:instagram.com intext:"twitter"
+
+# ================================================
+# CATEGORY 2: BUG BOUNTY & SUBDOMAIN DISCOVERY  
+# ================================================
+
+# X.com Subdomain Enumeration
+site:*.x.com -www.x.com
+site:*.twitter.com -www.twitter.com
+intext:"*.x.com" filetype:txt
+intext:"*.twitter.com" filetype:txt
+
+# X.com Infrastructure Discovery
+site:x.com inurl:api
+site:x.com inurl:dev OR inurl:staging OR inurl:test
+site:x.com inurl:admin OR inurl:dashboard
+site:x.com intext:"API" OR intext:"endpoint"
+
+# ================================================
+# CATEGORY 3: WEB APP SECURITY & CONFIGURATION
+# ================================================
+
+# X.com Configuration & Debug Info
+site:x.com filetype:json
+site:x.com filetype:xml
+site:x.com intext:"debug" OR intext:"error"
+site:x.com intext:"config" OR intext:"configuration"
+
+# X.com Security Headers & Info
+site:x.com intext:"X-Frame-Options" OR intext:"Content-Security-Policy"
+site:x.com intext:"Server:" OR intext:"X-Powered-By:"
+site:x.com intext:"Access-Control" OR intext:"CORS"
+site:x.com intitle:"404" OR intitle:"error"

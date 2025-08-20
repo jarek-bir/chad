@@ -36,7 +36,9 @@ def main():
 			args.user_agents,
 			args.proxies,
 			not args.no_sleep_on_start,
-			args.debug
+			args.debug,
+			getattr(args, 'use_tor', False),
+			getattr(args, 'tor_rotation', 10)
 		)
 		if tool.prepare() and tool.run():
 			if args.directory:

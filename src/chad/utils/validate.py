@@ -71,10 +71,17 @@ class MyArgParser(argparse.ArgumentParser):
 		print("DEBUG")
 		print("    Enable debug output")
 		print("    -dbg, --debug")
+		print("TOR")
+		print("    Enable Tor for enhanced anonymity")
+		print("    -tor, --use-tor")
+		print("TOR ROTATION")
+		print("    Number of queries after which to rotate Tor IP")
+		print("    Default: 10")
+		print("    -tr-rot, --tor-rotation = 5 | 15 | etc.")
 
 	def error(self, message):
 		if len(sys.argv) > 1:
-			print("Missing a mandatory option (-q) and/or optional (-s, -t, -tr, -pr, -min-q, -max-q, -min-p, -max-p, -a, -x, -dir, -th, -o, -nsos, -dbg)")
+			print("Missing a mandatory option (-q) and/or optional (-s, -t, -tr, -pr, -min-q, -max-q, -min-p, -max-p, -a, -x, -dir, -th, -o, -nsos, -dbg, -tor, -tr-rot)")
 			print("Use -h or --help for more info")
 		else:
 			self.print_help()
@@ -100,9 +107,11 @@ class Validate:
 		self.__parser.add_argument("-x"    , "--proxies"          , required = False, type   = str         , default = ""   )
 		self.__parser.add_argument("-dir"  , "--directory"        , required = False, type   = str         , default = ""   )
 		self.__parser.add_argument("-th"   , "--threads"          , required = False, type   = str         , default = ""   )
-		self.__parser.add_argument("-o"    , "--out"              , required = False, type   = str         , default = ""   )
-		self.__parser.add_argument("-nsos" , "--no-sleep-on-start", required = False, action = "store_true", default = False)
-		self.__parser.add_argument("-dbg"  , "--debug"            , required = False, action = "store_true", default = False)
+		self.__parser.add_argument("-o"     , "--out"              , required = False, type   = str         , default = ""   )
+		self.__parser.add_argument("-nsos"  , "--no-sleep-on-start", required = False, action = "store_true", default = False)
+		self.__parser.add_argument("-dbg"   , "--debug"            , required = False, action = "store_true", default = False)
+		self.__parser.add_argument("-tor"   , "--use-tor"          , required = False, action = "store_true", default = False)
+		self.__parser.add_argument("-tr-rot", "--tor-rotation"     , required = False, type   = str         , default = ""   )
 
 	def validate_args(self):
 		"""
@@ -122,6 +131,7 @@ class Validate:
 		self.__validate_proxies()
 		self.__validate_directory()
 		self.__validate_threads()
+		self.__validate_tor_rotation()
 		return self.__success, self.__args
 
 	def __error(self, message: str):
@@ -275,3 +285,14 @@ class Validate:
 				if tmp <= 0:
 					self.__error("Number of files to download in parallel must be greater than zero")
 		self.__args.threads = tmp
+
+	def __validate_tor_rotation(self):
+		tmp = 10
+		if self.__args.tor_rotation:
+			if not self.__args.tor_rotation.isdigit():
+				self.__error("Tor rotation interval must be numeric")
+			else:
+				tmp = int(self.__args.tor_rotation)
+				if tmp <= 0:
+					self.__error("Tor rotation interval must be greater than zero")
+		self.__args.tor_rotation = tmp

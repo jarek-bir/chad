@@ -1,0 +1,64 @@
+# Web Application Security Dorks
+
+# SQL Injection Indicators
+intext:"mysql_fetch_array" OR intext:"mysql_num_rows"
+intext:"Warning: mysql_" OR intext:"MySQL Error"
+intext:"ORA-00921" OR intext:"Microsoft JET Database"
+intext:"PostgreSQL query failed"
+inurl:"id=" intext:"Warning: mysql_"
+inurl:"category=" OR inurl:"product=" intext:"error"
+inurl:"login.php" intext:"Warning:"
+
+# Local File Inclusion (LFI)
+inurl:"page=" OR inurl:"file=" OR inurl:"path="
+inurl:"include=" OR inurl:"inc=" filetype:php
+inurl:"dir=" OR inurl:"folder=" filetype:php
+intext:"failed to open stream" filetype:php
+intext:"Warning: include" filetype:php
+
+# Remote File Inclusion (RFI)  
+inurl:"http://" filetype:php inurl:"page="
+inurl:"https://" filetype:php inurl:"include="
+intext:"Warning: file_get_contents" filetype:php
+
+# Command Injection
+inurl:"ping=" OR inurl:"cmd=" OR inurl:"exec="
+inurl:"system=" OR inurl:"shell=" filetype:php
+intext:"sh: command not found"
+intext:"Permission denied" filetype:php
+
+# Cross-Site Scripting (XSS)
+inurl:"search=" OR inurl:"q=" OR inurl:"query="
+inurl:"keyword=" OR inurl:"term=" filetype:php
+inurl:"message=" OR inurl:"comment=" filetype:php
+
+# Information Disclosure
+intext:"phpinfo()" filetype:php
+intext:"Server Information" intitle:"phpinfo"
+intext:"Apache" intext:"Server at" "Port"
+intext:"nginx" intext:"error page"
+intext:"IIS" intext:"error" intitle:"Error"
+
+# Backup & Temporary Files
+filetype:bak OR filetype:backup OR filetype:tmp
+inurl:"backup" OR inurl:"bak" OR inurl:"old"
+filetype:php~ OR filetype:php.bak
+inurl:"temp" OR inurl:"tmp" filetype:sql
+
+# Upload Vulnerabilities
+inurl:"upload" OR inurl:"file_upload" filetype:php
+intitle:"File Upload" OR intitle:"Upload File"
+inurl:"filemanager" OR inurl:"file_manager"
+intext:"upload successful" OR intext:"file uploaded"
+
+# Authentication Bypass
+inurl:"admin.php" OR inurl:"administrator.php"
+inurl:"login.php" intext:"admin"
+intext:"Login" intext:"admin" intext:"password"
+inurl:"auth.php" OR inurl:"authenticate.php"
+
+# Session Management
+intext:"PHPSESSID" OR intext:"JSESSIONID"
+intext:"session_start" filetype:php
+inurl:"session=" filetype:php
+intext:"session expired" OR intext:"session timeout"

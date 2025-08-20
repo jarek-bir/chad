@@ -1,3 +1,4 @@
+# Social Media & Contact Information
 intext:"t.me/"
 intext:"discord.com/invite/" OR intext:"discord.gg/invite/"
 intext:"youtube.com/c/" OR intext:"youtube.com/channel/"
@@ -6,3 +7,120 @@ intext:"facebook.com/"
 intext:"instagram.com/"
 intext:"tiktok.com/"
 intext:"linkedin.com/in/" OR intext:"linkedin.com/company/"
+intext:"github.com/"
+intext:"stackoverflow.com/users/"
+intext:"reddit.com/u/" OR intext:"reddit.com/user/"
+
+# Admin Panels & Login Pages
+intitle:admin intitle:login
+inurl:admin inurl:login
+intitle:"Admin Panel" OR intitle:"Administration"
+inurl:"/wp-admin/" OR inurl:"/administrator/"
+intitle:"cPanel" OR intitle:"DirectAdmin" OR intitle:"Plesk"
+inurl:"/phpmyadmin/" OR inurl:"/pma/"
+intitle:"Grafana" OR intitle:"Kibana" OR intitle:"Jenkins"
+inurl:"/dashboard" intitle:"Dashboard"
+inurl:"/manager/html" OR inurl:"/admin/console"
+intitle:"RouterOS" OR intitle:"mikrotik"
+
+# Configuration Files & Secrets
+filetype:conf OR filetype:config OR filetype:cfg
+filetype:env OR filetype:ini OR filetype:properties
+filetype:xml intext:"password" OR intext:"secret"
+filetype:json intext:"password" OR intext:"token" OR intext:"key"
+filetype:yaml OR filetype:yml intext:"password"
+ext:conf inurl:rsyncd.conf -cvs -man
+filetype:conf inurl:firewall -intitle:cvs
+ext:pem OR ext:key OR ext:crt OR ext:p12
+filetype:bak inurl:"htaccess|passwd|shadow|htusers"
+intext:"api_key" OR intext:"api-key" OR intext:"apikey"
+
+# Database Related
+intext:"#mysql dump" filetype:sql
+filetype:sql intext:"INSERT INTO" OR intext:"CREATE TABLE"
+inurl:admin filetype:db
+intext:"phpMyAdmin" "running on" inurl:"main.php"
+filetype:mdb OR filetype:accdb
+intext:"MySQL" intext:"ERROR" filetype:php
+intext:"Oracle" intext:"ORA-" filetype:php
+intext:"PostgreSQL" intext:"pg_" filetype:php
+
+# Directory Listings & File Exposure
+intitle:"index of /" "parent directory"
+intitle:"Index of" upload size parent directory
+intitle:"index of /" intext:"last modified"
+intitle:"index of /" "backup" OR "bak" OR "old"
+intitle:"index of /" ".git" OR ".svn" OR ".env"
+intitle:"index of /" "config" OR "conf" OR "log"
+intitle:"index of /" "password" OR "passwd" OR "secret"
+intitle:"index of /" ".ssh" OR "id_rsa" OR "authorized_keys"
+
+# Error Messages & Debug Info
+intext:"Warning: mysql_" OR intext:"MySQL Error"
+intext:"Microsoft JET Database" OR intext:"ODBC Drivers error"
+intext:"ORA-00921: unexpected end of SQL command"
+intext:"PostgreSQL query failed: ERROR"
+intext:"Warning: file_get_contents" filetype:php
+intext:"Fatal error: Call to undefined function" filetype:php
+intext:"Parse error: syntax error" filetype:php
+intext:"Warning: include" OR intext:"Warning: require"
+
+# Version Control & Development
+inurl:".git/config" OR inurl:".git/index"
+inurl:".svn/entries" OR inurl:".svn/wc.db"
+inurl:"composer.json" OR inurl:"package.json"
+inurl:"Dockerfile" OR inurl:"docker-compose"
+inurl:".env" filetype:env
+filetype:diff site:github.com
+inurl:"robots.txt" "Disallow:"
+
+# Log Files & Monitoring
+filetype:log access.log -CVS
+filetype:log error.log -CVS
+filetype:log intext:"GET" OR intext:"POST"
+intext:"apache" filetype:log
+intext:"nginx" filetype:log
+filetype:log intext:"Failed password"
+filetype:log intext:"authentication failure"
+
+# Cloud & Infrastructure
+intext:"aws_access_key_id" OR intext:"aws_secret_access_key"
+intext:"AKIA" OR intext:"ASIA" filetype:json
+intext:"BEGIN RSA PRIVATE KEY" OR intext:"BEGIN CERTIFICATE"
+intext:"azure" intext:"connection string"
+intext:"firebase" intext:"config" filetype:js
+inurl:"/.well-known/" OR inurl:"/.aws/"
+intext:"docker" intext:"registry" OR intext:"repository"
+
+# Backup Files & Archives
+filetype:tar OR filetype:zip OR filetype:rar OR filetype:7z
+filetype:gz OR filetype:bz2 OR filetype:tar.gz
+inurl:"backup" filetype:sql OR filetype:tar OR filetype:zip
+intitle:"index of /" "backup" filetype:sql
+filetype:old OR filetype:bak OR filetype:backup
+inurl:"dump" filetype:sql OR filetype:txt
+
+# Documents & Sensitive Files
+ext:pdf OR ext:docx OR ext:xlsx OR ext:pptx
+filetype:doc intext:"password" OR intext:"confidential"
+filetype:xls intext:"username" OR intext:"email"
+filetype:txt intext:"password" -github.com -stackoverflow.com
+filetype:csv intext:"email" OR intext:"phone"
+filetype:rtf OR filetype:odt OR filetype:ods
+
+# Network & Infrastructure Info
+intext:"nmap" filetype:xml OR filetype:txt
+intext:"netstat" OR intext:"ifconfig" filetype:txt
+intext:"iptables" OR intext:"firewall" filetype:conf
+intext:"cisco" intext:"enable secret" OR intext:"enable password"
+intext:"router" intext:"password" filetype:cfg
+inurl:"/cgi-bin/" intext:"admin" OR intext:"password"
+
+# CMS & Framework Specific
+inurl:"/wp-config.php" OR inurl:"/wp-content/"
+inurl:"/drupal/" intext:"install.php"
+inurl:"/joomla/" intext:"configuration.php"
+inurl:"/magento/" intext:"local.xml"
+intext:"Laravel" intext:".env" filetype:php
+intext:"Django" intext:"SECRET_KEY"
+inurl:"/typo3/" OR inurl:"/concrete5/"

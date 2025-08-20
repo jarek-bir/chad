@@ -1,0 +1,97 @@
+# Bug Bounty Specific Dorks
+
+# Subdomain Enumeration
+site:*.target.com -www.target.com
+site:target.com inurl:subdomain
+intext:"*.target.com" filetype:txt
+intext:"target.com" intext:"subdomain" OR intext:"domain"
+
+# Sensitive Parameter Discovery
+inurl:"id=" OR inurl:"user=" OR inurl:"account="
+inurl:"token=" OR inurl:"key=" OR inurl:"session="
+inurl:"admin=" OR inurl:"administrator=" 
+inurl:"debug=" OR inurl:"test=" OR inurl:"dev="
+inurl:"file=" OR inurl:"path=" OR inurl:"dir="
+inurl:"url=" OR inurl:"redirect=" OR inurl:"next="
+
+# Technology Fingerprinting
+intext:"powered by" OR intext:"built with"
+intext:"framework" OR intext:"CMS"
+intitle:"Apache" OR intitle:"nginx" OR intitle:"IIS"
+intext:"PHP" OR intext:"ASP.NET" OR intext:"JSP"
+intext:"WordPress" OR intext:"Drupal" OR intext:"Joomla"
+intext:"Laravel" OR intext:"Django" OR intext:"Rails"
+
+# Error Message Hunting
+intext:"Warning:" OR intext:"Error:" OR intext:"Fatal error:"
+intext:"Notice:" OR intext:"Parse error:"
+intext:"SQL syntax" OR intext:"mysql error"
+intext:"Oracle error" OR intext:"PostgreSQL error"
+intext:"ODBC" OR intext:"Microsoft JET Database"
+intext:"stack trace" OR intext:"exception"
+
+# Admin Panel Discovery
+inurl:"/admin" OR inurl:"/administrator"
+inurl:"/wp-admin" OR inurl:"/wp-login"
+inurl:"/panel" OR inurl:"/dashboard"
+inurl:"/control" OR inurl:"/manage"
+inurl:"/backend" OR inurl:"/backoffice"
+intitle:"Admin" OR intitle:"Administration"
+
+# File Upload Testing
+inurl:"upload" OR inurl:"file_upload"
+inurl:"attach" OR inurl:"attachment"
+inurl:"media" OR inurl:"files"
+intitle:"Upload" OR intitle:"File Upload"
+intext:"choose file" OR intext:"select file"
+
+# API Endpoint Discovery
+inurl:"/api/" OR inurl:"/v1/" OR inurl:"/v2/"
+inurl:"/rest/" OR inurl:"/graphql"
+inurl:"/json" OR inurl:"/xml"
+intext:"API" intext:"endpoint" OR intext:"documentation"
+intext:"swagger" OR intext:"openapi"
+inurl:"/docs" intext:"API"
+
+# Authentication Testing
+inurl:"login" OR inurl:"signin" OR inurl:"auth"
+inurl:"register" OR inurl:"signup"
+inurl:"forgot" OR inurl:"reset" OR inurl:"recover"
+inurl:"oauth" OR inurl:"sso"
+intext:"2FA" OR intext:"two factor"
+intext:"captcha" OR intext:"recaptcha"
+
+# Input Validation Points
+inurl:"search" OR inurl:"query" OR inurl:"q="
+inurl:"comment" OR inurl:"message" OR inurl:"feedback"
+inurl:"contact" OR inurl:"support"
+inurl:"review" OR inurl:"rating"
+inurl:"profile" OR inurl:"account" OR inurl:"settings"
+
+# Business Logic Testing
+inurl:"checkout" OR inurl:"payment" OR inurl:"billing"
+inurl:"cart" OR inurl:"order" OR inurl:"purchase"
+inurl:"invoice" OR inurl:"receipt"
+inurl:"discount" OR inurl:"coupon" OR inurl:"promo"
+inurl:"referral" OR inurl:"affiliate"
+
+# Session & State Management
+inurl:"session" OR inurl:"sessionid"
+inurl:"state" OR inurl:"csrf" OR inurl:"token"
+inurl:"remember" OR inurl:"persistent"
+intext:"logged in" OR intext:"authenticated"
+intext:"timeout" OR intext:"expired"
+
+# Mobile App Related
+intext:"mobile app" OR intext:"android" OR intext:"iOS"
+intext:"deep link" OR intext:"universal link"
+intext:"app store" OR intext:"play store"
+inurl:"/mobile" OR inurl:"/app"
+intext:"API key" intext:"mobile"
+
+# Third-party Integrations
+intext:"integration" OR intext:"webhook"
+intext:"callback" OR intext:"redirect_uri"
+intext:"partner" OR intext:"affiliate"
+intext:"embed" OR intext:"widget"
+intext:"plugin" OR intext:"extension"

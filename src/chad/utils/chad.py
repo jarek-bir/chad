@@ -1,10 +1,22 @@
 #!/usr/bin/env python3
 
-from . import array, file, general, grep, proxy
+import json
+import os
+import random
+import requests
+import sys
+import time
+from datetime import datetime
 
-import alive_progress, concurrent.futures, dataclasses, datetime, dateutil.relativedelta, nagooglesearch, random, requests, threading, time
+from . import array, file, general, grep, proxy, validate
+from .tor_manager import TorManager
+from .rate_limiter import AdvancedRateLimiter, RateLimitConfig
 
-requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
+import alive_progress, concurrent.futures, dataclasses, dateutil.relativedelta, nagooglesearch, threading
+import urllib3
+
+# Disable SSL warnings
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # ----------------------------------------
 
@@ -35,10 +47,13 @@ class Chad:
 		user_agents    : list[str],
 		proxies        : list[str],
 		sleep_on_start : bool,
-		debug          : bool
+		debug          : bool,
+		use_tor        : bool = False,
+		tor_rotation   : int = 10
 	):
 		"""
 		Class for Google searching.
+		Enhanced with Tor support and user agent rotation.
 		"""
 		self.__queries = queries
 		self.__site            = site
@@ -57,6 +72,62 @@ class Chad:
 		self.__debug_lock      = threading.Lock()
 		self.__blacklist       = grep.get_blacklist()
 		self.__results         = []
+		
+		# Tor integration
+		self.__use_tor         = use_tor
+		self.__tor_rotation    = tor_rotation  # Rotate IP every N queries
+		self.__tor_manager     = None
+		self.__query_count     = 0
+		
+		# Initialize Tor Manager
+		if use_tor:
+			self.__tor_manager = TorManager()
+			if self.__tor_manager.check_tor_status():
+				print(general.get_timestamp("Tor service is available"))
+			else:
+				print(general.get_timestamp("Warning: Tor service not available"))
+				self.__use_tor = False
+				self.__tor_manager = None
+		else:
+			self.__tor_manager = None
+		
+		# Initialize Rate Limiter (always create one)
+		if self.__use_tor and self.__tor_manager:
+			# Intelligent rate limiting for Tor
+			rate_config = RateLimitConfig(
+				min_query_delay=15.0,      # Longer delays for Tor
+				max_query_delay=45.0,
+				enable_adaptive=True,
+				success_speedup=0.8,
+				error_slowdown=2.0,
+				min_speedup_delay=10.0,
+				max_slowdown_delay=120.0
+			)
+		else:
+			# Standard rate limiting for regular usage
+			rate_config = RateLimitConfig(
+				min_query_delay=5.0,       # Standard delays for regular usage
+				max_query_delay=20.0,
+				enable_adaptive=True,
+				success_speedup=0.9,
+				error_slowdown=1.5,
+				min_speedup_delay=3.0,
+				max_slowdown_delay=60.0
+			)
+		
+		self.__rate_limiter = AdvancedRateLimiter(
+			config=rate_config,
+			tor_manager=self.__tor_manager
+		)		# Initialize standard rate limiter if not using Tor
+		if not self.__rate_limiter:
+			rate_config = RateLimitConfig(
+				min_query_delay=minimum_queries,
+				max_query_delay=maximum_queries,
+				min_page_delay=minimum_pages,
+				max_page_delay=maximum_pages,
+				enable_adaptive=False  # Conservative without Tor
+			)
+			self.__rate_limiter = AdvancedRateLimiter(rate_config)
 
 	def __get_tbs(self, time: int) -> str:
 		"""
@@ -64,7 +135,7 @@ class Chad:
 		"""
 		tmp = "li:1"
 		if time:
-			now = datetime.datetime.today()
+			now = datetime.today()
 			tmp = nagooglesearch.get_tbs(now, now - dateutil.relativedelta.relativedelta(months = time))
 		return tmp
 
@@ -98,9 +169,12 @@ class Chad:
 
 	def run(self):
 		"""
-		Run a Google search.
+		Run a Google search with enhanced Tor and advanced rate limiting.
 		"""
 		print(general.get_timestamp("Searching Google Dorks..."))
+		if self.__use_tor:
+			print(general.get_timestamp("Using Tor for enhanced anonymity"))
+			print(f"IP rotation every {self.__tor_rotation} queries")
 		print("Press CTRL + C to exit early - results will be saved")
 		self.__results = []
 		count = 0
@@ -110,16 +184,24 @@ class Chad:
 				self.__wait()
 			for query in self.__queries:
 				count += 1
+				self.__query_count += 1
 				result = Google(query)
+				
+				# Start query tracking
+				query_metrics = self.__rate_limiter.start_query(query)
+				
 				while not exit_program:
-					# --------------------
-					if not self.__proxies.is_empty():
+					# Handle proxy selection (Tor takes precedence)
+					if self.__use_tor and self.__tor_manager:
+						# Use Tor proxy
+						result.proxy = f"socks5://127.0.0.1:{self.__tor_manager.tor_port}"
+					elif not self.__proxies.is_empty():
 						if self.__proxies.is_round_robin():
-							self.__wait()
+							self.__rate_limiter.wait_between_queries()
 						result.proxy = self.__proxies.get()
 					elif count > 1:
-						self.__wait()
-					# --------------------
+						self.__rate_limiter.wait_between_queries()
+					
 					self.__print_status(count, result)
 					search_parameters = {
 						"q"     : result.query,
@@ -129,44 +211,93 @@ class Chad:
 						"safe"  : "images",
 						"num"   : self.__get_num()
 					}
-					client = nagooglesearch.GoogleClient(
-						tld               = "com",
-						search_parameters = search_parameters,
-						user_agent        = self.__get_user_agent(),
-						proxy             = result.proxy,
-						max_results       = self.__total_results,
-						min_sleep         = self.__minimum_pages,
-						max_sleep         = self.__maximum_pages,
-						debug             = self.__debug
-					)
-					result.urls = client.search()
-					# --------------------
-					if not grep.has_site(result.query):
-						result.urls = grep.filter_blacklist(result.urls, self.__blacklist)
-					if result.urls:
-						self.__results.append(result)
-					# --------------------
-					error = client.get_error()
-					if error in ["REQUESTS_EXCEPTION", "429_TOO_MANY_REQUESTS"]:
-						general.print_yellow(error)
-						if result.proxy:
-							message = self.__proxies.remove(result.proxy)
-							if message:
-								print(message)
-							if self.__proxies.is_empty():
-								general.print_red("All proxies has been exhausted!")
+					
+					# Enhanced user agent selection
+					user_agent = self.__get_enhanced_user_agent()
+					
+					try:
+						client = nagooglesearch.GoogleClient(
+							tld               = "com",
+							search_parameters = search_parameters,
+							user_agent        = user_agent,
+							proxy             = result.proxy,
+							max_results       = self.__total_results,
+							min_sleep         = self.__minimum_pages,
+							max_sleep         = self.__maximum_pages,
+							debug             = self.__debug
+						)
+						result.urls = client.search()
+						
+						if not grep.has_site(result.query):
+							result.urls = grep.filter_blacklist(result.urls, self.__blacklist)
+						
+						# Query successful
+						self.__rate_limiter.end_query(
+							query_metrics, 
+							success=True, 
+							results_count=len(result.urls)
+						)
+						
+						if result.urls:
+							self.__results.append(result)
+						
+						error = client.get_error()
+						if error in ["REQUESTS_EXCEPTION", "429_TOO_MANY_REQUESTS"]:
+							general.print_yellow(error)
+							
+							# Update metrics with error
+							self.__rate_limiter.end_query(
+								query_metrics, 
+								success=False, 
+								error_type=error
+							)
+							
+							if self.__use_tor and self.__tor_manager:
+								# For Tor, try rotating IP instead of removing proxy
+								print(general.get_timestamp("Rate limited - adaptive delay and IP rotation..."))
+								self.__rate_limiter.wait_between_queries()
+								continue
+							elif result.proxy:
+								message = self.__proxies.remove(result.proxy)
+								if message:
+									print(message)
+								if self.__proxies.is_empty():
+									general.print_red("All proxies has been exhausted!")
+									exit_program = True
+									break
+							else:
 								exit_program = True
 								break
 						else:
-							exit_program = True
 							break
-					else:
+							
+					except Exception as e:
+						# Handle unexpected errors
+						self.__rate_limiter.end_query(
+							query_metrics, 
+							success=False, 
+							error_type=str(e)
+						)
+						print(f"[!] Unexpected error: {e}")
 						break
-					# --------------------
+						
 				if exit_program:
 					break
 		except KeyboardInterrupt:
-			pass
+			print(general.get_timestamp("Interrupted by user"))
+		finally:
+			# Print performance report
+			self.__rate_limiter.print_performance_report()
+			
+			# Export metrics if available
+			timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+			metrics_file = f"chad_metrics_{timestamp}.json"
+			self.__rate_limiter.export_metrics(metrics_file)
+			
+			# Cleanup Tor if used
+			if self.__use_tor and self.__tor_manager:
+				print(general.get_timestamp("Cleaning up Tor connection..."))
+		
 		if not self.__results:
 			print("No results")
 		else:
@@ -218,6 +349,17 @@ class Chad:
 		if self.__user_agents_len > 0:
 			user_agent = self.__user_agents[random.randint(0, self.__user_agents_len - 1)]
 		return user_agent
+	
+	def __get_enhanced_user_agent(self):
+		"""
+		Get enhanced user agent with Tor integration support.
+		"""
+		if self.__use_tor and self.__tor_manager:
+			# Use Tor manager's user agent rotation
+			return self.__tor_manager.get_random_user_agent()
+		else:
+			# Use standard user agent rotation
+			return self.__get_user_agent()
 
 	def __get_urls(self) -> list[str]:
 		"""
@@ -262,7 +404,7 @@ class Chad:
 			if response.status_code == 200:
 				tmp.content = response.content
 				tmp.path = file.get_url_filename(url, downloads_directory)
-		except (requests.exceptions.RequestException, requests.packages.urllib3.exceptions.HTTPError) as ex:
+		except (requests.exceptions.RequestException, urllib3.exceptions.HTTPError) as ex:
 			self.__print_debug(str(ex))
 		finally:
 			if response:

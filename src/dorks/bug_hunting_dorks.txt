@@ -1,0 +1,197 @@
+# Advanced Bug Hunting Google Dorks Collection
+# Compiled for enhanced security testing
+
+# =================================
+# INDEX OF / DIRECTORY TRAVERSAL
+# =================================
+intitle:"index of /" "parent directory"
+intitle:"Index of" / "chat/logs"
+intitle:"Index of" upload size parent directory
+intitle:"index of" mysql.conf OR mysql_config
+intitle:"Index Of" cookies.txt size
+intitle:"Index Of" -inurl:maillog maillog size
+intitle:"index of" +myd size
+intitle:"index.of *" admin news.asp configview.asp
+intitle:"index.of" .diz .nfo last modified
+intitle:"index of" intext:globals.inc
+intitle:"index of" intext:connect.inc
+intitle:"Index of /admin"
+intitle:"Index of /mail"
+intitle:"Index of /password"
+intitle:"index of /private" -site:net -site:com -site:org
+intitle:"Index Of /network" "last modified"
+intext:"Index of /" +.htaccess
+intext:"Index of /" +passwd
+intext:"Index of /" +password.txt
+intext:"Index of /backup"
+
+# =================================
+# DATABASE & SQL VULNERABILITIES
+# =================================
+intext:"#mysql dump" filetype:sql
+intext:"MySQL error with query"
+intext:"Dumping data for table"
+intext:"phpMyAdmin MySQL-Dump" "INSERT INTO" -"the"
+intext:"phpMyAdmin MySQL-Dump" filetype:txt
+intext:"mysql dump" filetype:sql
+filetype:sql "insert into" (pass|passwd|password)
+filetype:sql ("values * MD5" | "values * password" | "values * encrypt")
+filetype:sql +"IDENTIFIED BY" -cvs
+filetype:sql password
+intext:"SQL Server Driver][SQL Server]Line 1: Incorrect syntax near"
+intext:"ORA-00921: unexpected end of SQL command"
+intext:"ORA-00933: SQL command not properly ended"
+intext:"PostgreSQL query failed: ERROR: parser: parse error"
+
+# =================================
+# CONFIG FILES & CREDENTIALS
+# =================================
+ext:conf inurl:rsyncd.conf -cvs -man
+ext:conf NoCatAuth -cvs
+filetype:conf inurl:firewall -intitle:cvs
+filetype:config web.config -CVS
+ext:ini intext:env.ini
+filetype:cfg auto_inst.cfg
+filetype:cnf inurl:_vti_pvt access.cnf
+ext:txt inurl:unattend.txt
+ext:yml database inurl:config
+filetype:properties inurl:db intext:password
+ext:pwd inurl:(service | authors | administrators | users) "# -FrontPage-"
+ext:reg "username=*" putty
+filetype:reg reg +intext:"defaultusername" +intext:"defaultpassword"
+
+# =================================
+# BACKUP FILES
+# =================================
+filetype:bak createobject sa
+filetype:bak inurl:"htaccess|passwd|shadow|htusers"
+filetype:bkf bkf
+ext:gho gho
+ext:vmdk vmdk
+ext:vmx vmx
+inurl:backup filetype:mdb
+filetype:mdb inurl:users.mdb
+filetype:mdb wwforum
+
+# =================================
+# LOG FILES
+# =================================
+filetype:log access.log -CVS
+filetype:log cron.log
+filetype:log "Software: Microsoft Internet Information Services *.*"
+filetype:log inurl:"password.log"
+ext:log "Software: Microsoft Internet Information Services *.*"
+intext:"Microsoft (R) Windows * (TM) Version * DrWtsn32 Copyright (C)" ext:log
+filetype:log "PHP Parse error" | "PHP Warning" | "PHP Error"
+intext:"Session Start * * * *:*:* *" filetype:log
+
+# =================================
+# EMAIL & CONTACT DATA
+# =================================
+filetype:eml eml +intext:"Subject" +intext:"From" +intext:"To"
+filetype:mbx mbx intext:Subject
+filetype:wab wab
+filetype:pst inurl:"outlook.pst"
+filetype:pst pst -from -to -date
+filetype:xls -site:gov inurl:contact
+filetype:xls inurl:"email.xls"
+mail filetype:csv -site:gov intext:name
+filetype:xls username password email
+
+# =================================
+# FTP & NETWORK CONFIGS
+# =================================
+inurl:"smb.conf" intext:"workgroup" filetype:conf conf
+filetype:ini wcx_ftp
+filetype:ini ws_ftp pwd
+intext:"index of/" "ws_ftp.ini" "parent directory"
+intitle:index.of ws_ftp.ini
+inurl:netscape.hst
+inurl:netscape.ini
+filetype:ini inurl:flashFXP.ini
+filetype:ini inurl:"serv-u.ini"
+
+# =================================
+# ADMIN PANELS & LOGIN PAGES
+# =================================
+intitle:admin intitle:login
+inurl:admin intitle:login
+inurl:admin filetype:xls
+inurl:admin filetype:db
+intitle:"Admin Login" "admin login" "blogware"
+intitle:"Admin login" "Web Site Administration" "Copyright"
+inurl:/admin/login.asp
+inurl:administrator "welcome to mambo"
+intitle:"phpMyAdmin" "running on" inurl:"main.php"
+intitle:phpMyAdmin "Welcome to phpMyAdmin ***" "running on * as root@*"
+
+# =================================
+# WEBCAMS & MONITORING
+# =================================
+intitle:"Live View" intitle:axis
+intitle:axis intitle:"video server"
+intitle:liveapplet
+inurl:axis-cgi/jpg
+inurl:axis-cgi/mjpg
+inurl:"ViewerFrame?Mode="
+inurl:view/index.shtml
+inurl:view/indexFrame.shtml
+inurl:view/view.shtml
+allintitle:"Network Camera NetworkCamera"
+
+# =================================
+# CERTIFICATES & KEYS
+# =================================
+intext:"Certificate Practice Statement" filetype:PDF | DOC
+filetype:pem intext:private
+ext:txt "Final encryption key"
+filetype:lic lic intext:key
+filetype:csr csr
+filetype:key key
+
+# =================================
+# ERROR PAGES & DEBUGGING
+# =================================
+intext:"A syntax error has occurred" filetype:ihtml
+intext:"An illegal character has been found in the statement" -"previous message"
+intext:"Error found handling the request" cocoon filetype:xml
+intext:"Fatal error: Call to undefined function" -reply -the -next
+intext:"Parse error: parse error, unexpected T_VARIABLE" "on line" filetype:php
+intext:"Warning: Cannot modify header information - headers already sent"
+intext:"Warning: mysql_connect(): Access denied for user: '*@*" "on line" -help -forum
+intext:"Warning: mysql_query()" "invalid query"
+intext:"Warning: pg_connect(): Unable to connect to PostgreSQL server: FATAL"
+intitle:"Apache Tomcat" "Error Report"
+intitle:"Error Occurred While Processing Request" +WHERE (SELECT|INSERT) filetype:cfm
+
+# =================================
+# DEVELOPMENT FILES
+# =================================
+ext:php inurl:phpinfo.php
+intitle:"phpinfo()" +"mysql.default_password" +"Zend Scripting Language Engine"
+inurl:test.php
+inurl:debug.php
+inurl:info.php
+filetype:php inurl:install
+filetype:php inurl:setup
+intitle:"PHP Advanced Transfer" (inurl:index.php | inurl:showrecent.php)
+
+# =================================
+# PRINTERS & IOT DEVICES
+# =================================
+intext:"Copyright (c) Tektronix, Inc." "printer status"
+intitle:"OfficeConnect Cable/DSL Gateway" intext:"Checking your browser"
+intitle:"ZyXEL Prestige Router" "Enter password"
+intext:"printer/main.html" intext:"settings"
+aboutprinter.shtml
+
+# =================================
+# CLOUD & STORAGE
+# =================================
+site:amazonaws.com intext:password
+site:s3.amazonaws.com filetype:log
+site:blob.core.windows.net
+site:googleapis.com
+inurl:"/uploads/" filetype:zip
+inurl:"/backup/" filetype:sql
+inurl:"/files/" filetype:pdf
